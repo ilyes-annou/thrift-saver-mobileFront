@@ -1,24 +1,30 @@
+import { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { createStackNavigator } from '@react-navigation/stack';
 import Profile from "./Profile.js";
 import Statistics from "./Statistics.js";
 import Calendar from "./Calendar.js";
 import Home from "./Home.js";
+import LoginPage from "./LoginPage.js";
 import AddEntryPage from "./AddEntryPage.js";
 const { width, height } = Dimensions.get("window");
 const Tab= createBottomTabNavigator();
-const Stack= createStackNavigator();
 
 export default function App() {
+
+  const [loggedIn, setLoggedIn] = useState(false);
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <StatusBar style="auto" />
 
       <NavigationContainer>
+
+        {loggedIn ? (
+
         <Tab.Navigator
           options={{}}
           screenOptions={{
@@ -139,7 +145,11 @@ export default function App() {
           ></Tab.Screen>
 
         </Tab.Navigator>
+        ):(
+          <LoginPage onLogin={() => setLoggedIn(true)} />
+        )}
       </NavigationContainer>
+      
 
 
     </SafeAreaView>
