@@ -9,6 +9,7 @@ import {
     TouchableOpacity
 } from "react-native";
 import axios from "axios";
+import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
 
 const Home = () => {
@@ -63,6 +64,20 @@ const Home = () => {
         navigation.navigate('LoginPage');
     };
 
+    const deleteSpending = async (id) => {
+        console.log(id);
+        try {
+            const result = await axios.delete(
+                "http://localhost:3080/spending/"+id,
+                
+            );
+            console.log('DELETE request successful:', result.data);
+          }
+          catch(error) {
+            console.error('Error making DELETE request:', error);
+          }
+    };
+
     useEffect(() => {
         fetchData();
         const unsubscribe = navigation.addListener("focus", () => {
@@ -74,7 +89,15 @@ const Home = () => {
 
     const renderExpenseItem = ({ item, index }) => (
         <View key={index}>
-          <Text> {item.description} { item.price}$</Text>
+            <Text> {item.description} { item.price}$</Text>
+            <TouchableOpacity
+                
+                onPress={() =>
+                    deleteSpending(item._id)
+                }
+            >
+                <Ionicons name="trash-outline" size={24} color="red" />
+            </TouchableOpacity>
           
         </View>
     );
