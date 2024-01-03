@@ -59,17 +59,29 @@ const Profile = ({ onLogout }) => {
   };
 
   const handleConfirm = () => {
-    Alert.alert(
-      "Caution",
-      "Do you really want to edit your profile?",
-      [
-        {text: 'Yes', onPress: () => {
-          console.log('OK Pressed');
-          editProfile()
-          
-        }},
-        {text: 'No', onPress: () => console.log('No Pressed')}
-      ],)
+    if((newEmailInput && newEmailInput !== "") || (newPasswordInput && newPasswordInput !== "")){
+      Alert.alert(
+        "Caution",
+        "Do you really want to edit your profile?",
+        [
+          {text: 'Yes', onPress: () => {
+            console.log('OK Pressed');
+            editProfile()
+            
+          }},
+          {text: 'No', onPress: () => console.log('No Pressed')}
+        ],
+      )
+    }
+    else{
+      Alert.alert(
+        "Caution",
+        "You must specify new email or new password",
+        [
+          {text: 'OK', onPress: () => {
+          }}
+        ],)
+    }
   }
 
   const editProfile = async() => {
@@ -94,11 +106,18 @@ const Profile = ({ onLogout }) => {
     }
     catch(error){
       console.error("Error making put request", error);
+      Alert.alert(
+        "Error",
+        "This operation didn't work, try again",
+        [
+          {text: 'OK', onPress: () => {
+          }}
+        ],)
     }
   }
 
 
-    useEffect(async () => {
+    useEffect( () => {
         
         const unsubscribe = navigation.addListener("focus", () => {
           return unsubscribe;
@@ -106,13 +125,32 @@ const Profile = ({ onLogout }) => {
         //fetchData();
     }, [navigation]);
 
+    useFocusEffect(
+      React.useCallback(() => {
+          fetchData()
+      }, [])
+    );
+
     
 
     return (
 
         <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='handled' >
 
-          <Text>Your email : { email }</Text>
+          <View
+            style={{
+              //alignSelf:"center",
+              marginTop:10,
+              paddingTop:20,
+              paddingBottom:20,
+              paddingLeft:10,
+              borderRadius:20,
+              backgroundColor: "white"
+            }}
+          >
+            <Text style={{fontWeight:"bold"}}>Your email : { email }</Text>
+
+          </View>
 
           {editing ? (
             <View>      
@@ -126,10 +164,11 @@ const Profile = ({ onLogout }) => {
               />
               <TextInput
                 style={styles.input}
-                placeholder="New Passwordd"
+                placeholder="New Password"
                 onChangeText={handleNewPasswordInputChange}
                 value={newPasswordInput.toString()}
                 autoCapitalize='none'
+                secureTextEntry={true}
               />
 
               <View style={styles.buttonContainer}>

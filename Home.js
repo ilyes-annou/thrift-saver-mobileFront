@@ -6,7 +6,8 @@ import {
     SafeAreaView,
     Button,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    Alert
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from '@expo/vector-icons';
@@ -95,6 +96,13 @@ const Home= () => {
           }
           catch(error) {
             console.error('Error making DELETE request:', error);
+            Alert.alert(
+                "Error",
+                "This operation didn't work, try again",
+                [
+                  {text: 'OK', onPress: () => {
+                  }}
+                ],)
           }
     };
 
@@ -107,13 +115,27 @@ const Home= () => {
         
     }, [navigation]);
 
+    const handleDelete = async(id) =>{
+        Alert.alert(
+            "Caution",
+            "Do you really want to delete this spending?",
+            [
+              {text: 'Yes', onPress: () => {
+                console.log('OK Pressed');
+                deleteSpending(id)
+                
+              }},
+              {text: 'No', onPress: () => console.log('No Pressed')}
+            ],)
+    }
+
     const renderExpenseItem = ({ item, index }) => (
         <View key={index}>
             <Text> {item.description} { item.price}$</Text>
             <TouchableOpacity
                 
                 onPress={() =>
-                    deleteSpending(item._id)
+                    handleDelete(item._id)
                 }
             >
                 <Ionicons name="trash-outline" size={24} color="red" />
@@ -159,7 +181,7 @@ const Home= () => {
                     borderRadius:20,
                     backgroundColor: "white"
                 }}>
-                    <Text style = {{}}>Total expenses</Text>
+                    <Text style = {{fontWeight:"bold"}}>Total expenses</Text>
                     <Text style = {{
                         alignSelf:"flex-end",
                         fontWeight:"bold",
@@ -177,7 +199,13 @@ const Home= () => {
                     borderRadius:20,
                     backgroundColor: "white"
                 }}>
-                    <Text>Last Expenses</Text> 
+
+                    {expenses[0]? ( <Text style={{
+                    fontWeight:"bold"
+                }}>Your Expenses</Text>) : (<Text style={{
+                    fontWeight:"bold"
+                }}>Your don't have any expense</Text> )}
+                    
 
                     
 

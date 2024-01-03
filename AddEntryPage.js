@@ -44,28 +44,46 @@ const AddEntryPage = () => {
     };
 
     const postSpending = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const id = await AsyncStorage.getItem('id');
-        console.log(token);
-        const result = await axios.post(
-            "http://localhost:3080/spending/",
-            {
-              price: amountInput,
-              description: descriptionInput,
-              date:date
-            },
-            {
-              headers: {
-                "Authorization": token,
-                "id":id
+      if(amountInput && amountInput !== "" && descriptionInput && descriptionInput!== ""){
+        try {
+          const token = await AsyncStorage.getItem('token');
+          const id = await AsyncStorage.getItem('id');
+          console.log(token);
+          const result = await axios.post(
+              "http://localhost:3080/spending/",
+              {
+                price: amountInput,
+                description: descriptionInput,
+                date:date
               },
-            }
-        );
-        console.log('POST request successful:', result.data);
+              {
+                headers: {
+                  "Authorization": token,
+                  "id":id
+                },
+              }
+          );
+          console.log('POST request successful:', result.data);
+        }
+        catch(error) {
+          console.error('Error making POST request:', error);
+          Alert.alert(
+            "Error",
+            "This operation didn't work, try again",
+            [
+              {text: 'OK', onPress: () => {
+              }}
+            ],)
+        }
       }
-      catch(error) {
-        console.error('Error making POST request:', error);
+      else{
+        Alert.alert(
+          "Caution",
+          "You must specify description and price",
+          [
+            {text: 'OK', onPress: () => {
+            }}
+          ],)
       }
     }
 
@@ -86,6 +104,7 @@ const AddEntryPage = () => {
           <TextInput
             style={styles.input}
             placeholder="Amount"
+            keyboardType="numeric"
             onChangeText={handleAmountInputChange}
             value={amountInput.toString()}
           />

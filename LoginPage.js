@@ -48,8 +48,32 @@ const LoginPage = ({ onLogin }) => {
         }
           catch(error) {
             console.error('Error making login request:', error);
+            Alert.alert(
+                "Error",
+                "This operation didn't work, try again",
+                [
+                  {text: 'OK', onPress: () => {
+                  }}
+                ],)
         }
     };
+
+    const handleLogin = async () => {
+
+        if(emailInput && emailInput!== "" && passwordInput && passwordInput !== ""){
+            checkLogin()
+        }
+        else{
+            Alert.alert(
+                "Caution",
+                "You must specify email and password",
+                [
+                  {text: 'OK', onPress: () => {
+                  }}
+                ],)
+        }
+
+    }
    
     return (
         <SafeAreaView
