@@ -1,5 +1,5 @@
-import { React, useState, useEffect } from "react";
-
+import React, { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import {
     View,
     Text,
@@ -11,21 +11,37 @@ import {
 import axios from "axios";
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Home = () => {
+
+const Home= () => {
 
     const [expenses, setExpenses] = useState([]);
     const [total, setTotal] = useState(0);
+    const [spendings, setSpendings]= useState([]);
+    const [email, setEmail]= useState("");
+    
+    
 
     const fetchData = async () => {
         try {
+            const fetchedEmail = await AsyncStorage.getItem('email');
+            setEmail(fetchedEmail.split('@')[0])
+            const token = await AsyncStorage.getItem('token');
+            const id = await AsyncStorage.getItem('id');
+            console.log("token "+ token)
+            console.log("id "+ id)
             const result = await axios.get(
-                "http://localhost:3080/spending/"
+                "http://localhost:3080/user/"+id+"/spending",
+                {
+                    headers: {
+                      "Authorization": token,
+                      "id":id
+                    },
+                }
             );
 
-            //setData(extractData(result.data));
-            
-            setExpenses(/*extractExpensesData*/(result.data));
+            setExpenses((result.data));
             console.log("reesult")
             console.log(result.data)
             console.log("Expenses")
@@ -40,37 +56,41 @@ const Home = () => {
             setTotal(calculatedTotal);
             console.log("total "+total)
             
-        } catch (error) {
-        console.warn(error);
+        } 
+        catch (error) {
+            console.warn(error);
         }
     };
 
-    /*const extractExpensesData = (data) => {
-        expensesList =[];
-        data.forEach((expense) => {
-            if(expense.description && expense.price){
-                expensesList.push({
-                    price: expense.price,
-                    description: expense.description
-                })
-            }
-        });
-        return expensesList;
-      };*/
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchData()
+        }, [])
+    );
+
+    
 
     const navigation = useNavigation();
 
-    const handleLogout = () => {
-        navigation.navigate('LoginPage');
-    };
+    
 
     const deleteSpending = async (id) => {
         console.log(id);
+        
         try {
+            const token = await AsyncStorage.getItem('token');
+            const userid = await AsyncStorage.getItem('id');
             const result = await axios.delete(
                 "http://localhost:3080/spending/"+id,
+                {
+                    headers: {
+                        "Authorization": token,
+                        "id":userid
+                    },
+                }
                 
             );
+            fetchData()
             console.log('DELETE request successful:', result.data);
           }
           catch(error) {
@@ -125,7 +145,7 @@ const Home = () => {
             >
                 <Text style={{
                     fontWeight:"bold"
-                }}>Hello Username</Text>
+                }}>Hello { email } </Text>
             </View>
 
             <View>
@@ -172,11 +192,6 @@ const Home = () => {
                 </View>
             </View>
 
-            <Button title ="test"  onPress={fetchData}>
-                <Text> Search </Text>
-            </Button>
-
-            <Button title="Logout" onPress={handleLogout} /> 
         </SafeAreaView>
       );
 };

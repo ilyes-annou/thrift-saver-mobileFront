@@ -3,18 +3,21 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, Dimensions, SafeAreaView } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Profile from "./Profile.js";
-import Statistics from "./Statistics.js";
-import Calendar from "./Calendar.js";
 import Home from "./Home.js";
 import LoginPage from "./LoginPage.js";
 import AddEntryPage from "./AddEntryPage.js";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const { width, height } = Dimensions.get("window");
 const Tab= createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 export default function App() {
 
+  //must be false
   const [loggedIn, setLoggedIn] = useState(false);
 
   return (
@@ -33,6 +36,7 @@ export default function App() {
             tabBarStyle: {
               backgroundColor: "white",
               position: "absolute",
+              paddingBottom:20,
               bottom: 40,
               marginHorizontal: 20,
               height: 60,
@@ -53,6 +57,7 @@ export default function App() {
             options={{
               tabBarShowLabel: false,
               headerShown: false,
+              
               tabBarLabel: "Home",
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
@@ -64,34 +69,15 @@ export default function App() {
                 />
               ),
             }}
-          ></Tab.Screen>
-
-
-          <Tab.Screen
-            name={"Statistics"}
-            component={Statistics}
-            options={{
-              tabBarShowLabel: false,
-              headerShown: false,
-              tabBarLabel: "Statistics",
-              tabBarIcon: ({ focused }) => (
-                <MaterialCommunityIcons
-                  name="heart"
-                  color={focused ? "red" : "black"}
-                  size={40}
-                  position={"absolute"}
-                  top={"35%"}
-                />
-              ),
-            }}
-          ></Tab.Screen>
+          >
+          </Tab.Screen>
 
           <Tab.Screen
-            name={"AddEntryPage"}
+            name={"Add Spending"}
             component={AddEntryPage}
             options={{
               tabBarShowLabel: false,
-              headerShown: false,
+              headerShown: true,
               tabBarLabel: "AddEntryPage",
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
@@ -105,32 +91,11 @@ export default function App() {
             }}
           ></Tab.Screen>
 
-
-          <Tab.Screen
-            name={"Calendar"}
-            component={Calendar}
-            options={{
-              tabBarShowLabel: false,
-              headerShown: false,
-              tabBarLabel: "Calendar",
-              tabBarIcon: ({ focused }) => (
-                <MaterialCommunityIcons
-                  name="database"
-                  color={focused ? "red" : "black"}
-                  size={40}
-                  position={"absolute"}
-                  top={"35%"}
-                />
-              ),
-            }}
-          ></Tab.Screen>
-
           <Tab.Screen
             name={"Profile"}
-            component={Profile}
             options={{
               tabBarShowLabel: false,
-              headerShown: false,
+              headerShown: true,
               tabBarLabel: "Profile",
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
@@ -142,11 +107,31 @@ export default function App() {
                 />
               ),
             }}
-          ></Tab.Screen>
+          >
+
+            {() => (
+              <Profile
+                onLogout={async () => {
+                  setLoggedIn(false);
+                  console.log()
+                  await AsyncStorage.clear();}}
+              />
+            )}
+
+          </Tab.Screen>
+       
 
         </Tab.Navigator>
+
+        
         ):(
-          <LoginPage onLogin={() => setLoggedIn(true)} />
+          <Stack.Navigator>
+            <Stack.Screen
+              name="LoginPage"
+              component={() => <LoginPage onLogin={() => setLoggedIn(true)} />}
+              options={{ headerShown: false }}
+            />
+          </Stack.Navigator>
         )}
       </NavigationContainer>
       
@@ -162,5 +147,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  input: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: "red",
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 10,
   },
 });
