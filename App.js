@@ -1,17 +1,16 @@
-import { useEffect, useState } from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Dimensions, SafeAreaView } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Dimensions, SafeAreaView } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Profile from "./Profile.js";
 import Home from "./Home.js";
 import LoginPage from "./LoginPage.js";
 import AddEntryPage from "./AddEntryPage.js";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { width, height } = Dimensions.get("window");
 const Tab= createBottomTabNavigator();
 const Stack = createStackNavigator();
 
@@ -19,6 +18,8 @@ export default function App() {
 
   //must be false
   const [loggedIn, setLoggedIn] = useState(false);
+
+  
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -62,7 +63,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="home"
-                  color={focused ? "red" : "black"}
+                  color={focused ? "green" : "black"}
                   size={40}
                   position={"absolute"}
                   top={"35%"}
@@ -82,7 +83,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="plus"
-                  color={focused ? "red" : "black"}
+                  color={focused ? "green" : "black"}
                   size={40}
                   position={"absolute"}
                   top={"35%"}
@@ -100,7 +101,7 @@ export default function App() {
               tabBarIcon: ({ focused }) => (
                 <MaterialCommunityIcons
                   name="human"
-                  color={focused ? "red" : "black"}
+                  color={focused ? "green" : "black"}
                   size={40}
                   position={"absolute"}
                   top={"35%"}
@@ -134,8 +135,6 @@ export default function App() {
           </Stack.Navigator>
         )}
       </NavigationContainer>
-      
-
 
     </SafeAreaView>
   );
@@ -144,9 +143,9 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     height: 40,

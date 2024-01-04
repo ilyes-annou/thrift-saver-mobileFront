@@ -6,21 +6,19 @@ import {
     StyleSheet,
     Button,
     Text,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    FlatList,
-    Platform, 
+    Switch,
     Alert,
     SafeAreaView
   } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker"
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const AddEntryPage = () => {
   const [amountInput, setAmountInput] = useState("");
   const [descriptionInput, setDescriptionInput] = useState("");
   const [date, setDate] = useState(new Date());
+  const [switchEnabled, setSwitchEnabled] = useState(false);
 
     const navigation = useNavigation();
 
@@ -38,6 +36,10 @@ const AddEntryPage = () => {
         });
     }, [navigation]);
 
+    const toggleSwitch = () => {
+      setSwitchEnabled(!switchEnabled);
+    };
+
     const onChange = (event, date) => {
       const currentDate = date || new Date();
       setDate(currentDate);
@@ -46,15 +48,17 @@ const AddEntryPage = () => {
     const postSpending = async () => {
       if(amountInput && amountInput !== "" && descriptionInput && descriptionInput!== ""){
         try {
-          const token = await AsyncStorage.getItem('token');
-          const id = await AsyncStorage.getItem('id');
+          const token = await AsyncStorage.getItem("token");
+          const id = await AsyncStorage.getItem("id");
+          const category = switchEnabled ? ("essential"): ("avoidable")
           console.log(token);
           const result = await axios.post(
               "http://localhost:3080/spending/",
               {
                 price: amountInput,
                 description: descriptionInput,
-                date:date
+                date:date,
+                category: category
               },
               {
                 headers: {
@@ -63,15 +67,15 @@ const AddEntryPage = () => {
                 },
               }
           );
-          console.log('POST request successful:', result.data);
+          console.log("POST request successful:", result.data);
         }
         catch(error) {
-          console.error('Error making POST request:', error);
+          console.error("Error making POST request:", error);
           Alert.alert(
             "Error",
             "This operation didn't work, try again",
             [
-              {text: 'OK', onPress: () => {
+              {text: "OK", onPress: () => {
               }}
             ],)
         }
@@ -81,14 +85,11 @@ const AddEntryPage = () => {
           "Caution",
           "You must specify description and price",
           [
-            {text: 'OK', onPress: () => {
+            {text: "OK", onPress: () => {
             }}
           ],)
       }
     }
-
-  
-    
 
     return (
 
@@ -96,41 +97,51 @@ const AddEntryPage = () => {
           style={{
             flex: 1,
             flexDirection: "column",
-            justifyContent: 'center', 
+            justifyContent: "center", 
           }} 
-          keyboardShouldPersistTaps='handled' 
+          keyboardShouldPersistTaps="handled"
         >
-        <View>
-          <TextInput
-            style={styles.input}
-            placeholder="Amount"
-            keyboardType="numeric"
-            onChangeText={handleAmountInputChange}
-            value={amountInput.toString()}
-          />
-          <TextInput
-            placeholder="Description"
-            style={styles.input}
-            onChangeText={handleDescriptionInputChange}
-            value={descriptionInput.toString()}
-          />
+          <View>
+            <TextInput
+              style={styles.input}
+              placeholder="Amount"
+              keyboardType="numeric"
+              onChangeText={handleAmountInputChange}
+              value={amountInput.toString()}
+            />
+            <TextInput
+              placeholder="Description"
+              style={styles.input}
+              onChangeText={handleDescriptionInputChange}
+              value={descriptionInput.toString()}
+            />
 
-          <Text style={{marginLeft:20}}>Date</Text>
-          
-          <DateTimePicker
-            testID="dateTimePicker"
-            style={{
-              marginHorizontal:20,
-            }}
-            value={date}
-            mode="date"
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-          />
+            <Text style={{marginVertical: 10, marginHorizontal: 20}}>Date</Text>
+            
+            <DateTimePicker
+              testID="dateTimePicker"
+              style={{
+                marginHorizontal:20,
+              }}
+              value={date}
+              mode="date"
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
 
-          <Button title="Add" onPress={postSpending} />
-          
+            <Text style={{marginVertical: 10, marginHorizontal: 20}}>Necessary expense?</Text>
+
+            <Switch
+              trackColor={{false: "grey", true: "green"}}
+              thumbColor="white"
+              style={{marginVertical: 10, marginHorizontal: 20,}}
+              onValueChange={toggleSwitch}
+              value={switchEnabled}
+            />
+
+            <Button title="Add" onPress={postSpending} />
+            
           </View>
         </SafeAreaView>
       );

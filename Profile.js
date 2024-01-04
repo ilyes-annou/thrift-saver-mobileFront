@@ -4,18 +4,14 @@ import {
     View,
     TextInput,
     StyleSheet,
-    Pressable,
     Text,
-    TouchableOpacity,
     Button,
-    FlatList,
     Alert,
     SafeAreaView
   } from "react-native";
 import axios from "axios";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useFocusEffect } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const Profile = ({ onLogout }) => {
@@ -32,11 +28,11 @@ const Profile = ({ onLogout }) => {
         "Caution",
         "Do you really want to log out?",
         [
-          {text: 'Yes', onPress: () => {
-            console.log('OK Pressed');
+          {text: "Yes", onPress: () => {
+            console.log("OK Pressed");
             onLogout();
           }},
-          {text: 'No', onPress: () => console.log('No Pressed')}
+          {text: "No", onPress: () => console.log("No Pressed")}
         ],)
       //onLogout();
     };
@@ -47,7 +43,7 @@ const Profile = ({ onLogout }) => {
     };
 
     const fetchData = async () => {
-      setEmail(await AsyncStorage.getItem('email'));
+      setEmail(await AsyncStorage.getItem("email"));
     };
 
     const handleNewEmailInputChange = (text) => {
@@ -64,12 +60,12 @@ const Profile = ({ onLogout }) => {
         "Caution",
         "Do you really want to edit your profile?",
         [
-          {text: 'Yes', onPress: () => {
-            console.log('OK Pressed');
+          {text: "Yes", onPress: () => {
+            console.log("OK Pressed");
             editProfile()
             
           }},
-          {text: 'No', onPress: () => console.log('No Pressed')}
+          {text: "No", onPress: () => console.log("No Pressed")}
         ],
       )
     }
@@ -78,7 +74,7 @@ const Profile = ({ onLogout }) => {
         "Caution",
         "You must specify new email or new password",
         [
-          {text: 'OK', onPress: () => {
+          {text: "OK", onPress: () => {
           }}
         ],)
     }
@@ -101,7 +97,7 @@ const Profile = ({ onLogout }) => {
         }
 
       );
-      await AsyncStorage.setItem('email', newEmailInput);
+      await AsyncStorage.setItem("email", newEmailInput);
       setEmail(newEmailInput);
     }
     catch(error){
@@ -110,7 +106,7 @@ const Profile = ({ onLogout }) => {
         "Error",
         "This operation didn't work, try again",
         [
-          {text: 'OK', onPress: () => {
+          {text: "OK", onPress: () => {
           }}
         ],)
     }
@@ -129,13 +125,11 @@ const Profile = ({ onLogout }) => {
       React.useCallback(() => {
           fetchData()
       }, [])
-    );
-
-    
+    ); 
 
     return (
 
-        <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps='handled' >
+        <SafeAreaView style={{flex: 1}} keyboardShouldPersistTaps="handled" >
 
           <View
             style={{
@@ -160,14 +154,14 @@ const Profile = ({ onLogout }) => {
                 placeholder="New Email"
                 onChangeText={handleNewEmailInputChange}
                 value={newEmailInput.toString()}
-                autoCapitalize='none'
+                autoCapitalize="none"
               />
               <TextInput
                 style={styles.input}
                 placeholder="New Password"
                 onChangeText={handleNewPasswordInputChange}
                 value={newPasswordInput.toString()}
-                autoCapitalize='none'
+                autoCapitalize="none"
                 secureTextEntry={true}
               />
 
@@ -181,8 +175,6 @@ const Profile = ({ onLogout }) => {
 
             </View>
 
-            
-
             ) : (
               <Button title="Edit Profile" onPress={handleEditProfile} />
             ) }
@@ -195,10 +187,7 @@ const Profile = ({ onLogout }) => {
             <Button title="Logout" color="red" onPress={handleLogout} /> 
 
           </View>
-
-          
-          
-          
+  
         </SafeAreaView>
       );
 
@@ -206,8 +195,8 @@ const Profile = ({ onLogout }) => {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginHorizontal: 100,
     marginTop: 10
   },

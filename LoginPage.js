@@ -1,21 +1,16 @@
-import { React, useState, useEffect } from "react";
+import { React, useState } from "react";
 
 import {
     View,
     TextInput,
     StyleSheet,
-    Pressable,
     Button,
-    Text,
-    TouchableOpacity,
-    KeyboardAvoidingView,
-    FlatList,
+    Image,
     Alert,
     SafeAreaView
 } from "react-native";
 import axios from "axios";
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginPage = ({ onLogin }) => {
     const [emailInput, setEmailInput] = useState("");
@@ -38,25 +33,82 @@ const LoginPage = ({ onLogin }) => {
                    "password":passwordInput 
                 }     
             );
-            console.log('Token:', result.data.token);
-            console.log('id:', result.data.id);
-            await AsyncStorage.setItem('token', result.data.token);
-            await AsyncStorage.setItem('id', result.data.id);
-            await AsyncStorage.setItem('email', emailInput);
+            console.log("Token:", result.data.token);
+            console.log("id:", result.data.id);
+            await AsyncStorage.setItem("token", result.data.token);
+            await AsyncStorage.setItem("id", result.data.id);
+            await AsyncStorage.setItem("email", emailInput);
             onLogin()
             
         }
           catch(error) {
-            console.error('Error making login request:', error);
+            console.error("Error making login request:", error.message);
             Alert.alert(
                 "Error",
                 "This operation didn't work, try again",
                 [
-                  {text: 'OK', onPress: () => {
+                  {text: "OK", onPress: () => {
                   }}
                 ],)
         }
     };
+
+    const handleCreate = async () => {
+        if(emailInput && emailInput!== "" && passwordInput && passwordInput !== ""){
+            checkLogin()
+            Alert.alert(
+                "Caution",
+                "Create an account with these info?",
+                [
+                {text: "Yes", onPress: async() => {
+
+
+                    try {
+                        const result = await axios.post(
+                            "http://localhost:3080/user/",
+                            {
+                            "email":emailInput,
+                            "password":passwordInput 
+                            }     
+                        );
+                        
+                        Alert.alert(
+                            "Info",
+                            "Success, try to login",
+                            [
+                            {text: "OK", onPress: () => {
+                            }}
+                            ],)
+                        
+                    }
+                    catch(error) {
+                        console.error("Error making login request:", error.message);
+                        Alert.alert(
+                            "Error",
+                            "This operation didn't work, try again",
+                            [
+                            {text: "OK", onPress: () => {
+                            }}
+                            ],)
+                    }
+
+                }},
+                {text: "No", onPress: () => {
+                    }}
+            ],)
+        }
+        else{
+            Alert.alert(
+                "Caution",
+                "You must specify email and password",
+                [
+                  {text: "OK", onPress: () => {
+                  }}
+            ],)
+        }
+
+
+    }
 
     const handleLogin = async () => {
 
@@ -68,9 +120,9 @@ const LoginPage = ({ onLogin }) => {
                 "Caution",
                 "You must specify email and password",
                 [
-                  {text: 'OK', onPress: () => {
-                  }}
-                ],)
+                  {text: "OK", onPress: () => {}}
+                ],
+            )
         }
 
     }
@@ -79,23 +131,44 @@ const LoginPage = ({ onLogin }) => {
         <SafeAreaView
             style={{
                 flex: 1, 
-                justifyContent: 'center', 
+                justifyContent: "center", 
             }}>
+            <Image source={require("./assets/logo.jpg")} style={{
+                width: 100, 
+                height: 100, 
+                marginBottom: 20, 
+                borderRadius:20,
+                alignSelf:"center"}} />
             <TextInput
                 placeholder="email"
                 style={styles.input}
                 onChangeText={handleEmailInputChange}
                 value={emailInput.toString()}
-                autoCapitalize='none'
+                autoCapitalize="none"
+                secureTextEntry={false}
             />
             <TextInput
                 style={styles.input}
                 placeholder="password"
                 onChangeText={handlePasswordInputChange}
                 value={passwordInput.toString()}
-                autoCapitalize='none'
+                autoCapitalize="none"
+                secureTextEntry={true}
             />
-            <Button title="Login" onPress={checkLogin} />
+
+            <View style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginHorizontal: 100,
+                marginTop: 10}}
+            >
+
+                <Button title="Login" onPress={handleLogin} />
+
+                <Button title="Create" onPress={handleCreate} />
+
+            </View>
+            
         </SafeAreaView>
     );  
 };
