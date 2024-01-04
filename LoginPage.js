@@ -55,7 +55,6 @@ const LoginPage = ({ onLogin }) => {
 
     const handleCreate = async () => {
         if(emailInput && emailInput!== "" && passwordInput && passwordInput !== ""){
-            checkLogin()
             Alert.alert(
                 "Caution",
                 "Create an account with these info?",
@@ -82,7 +81,7 @@ const LoginPage = ({ onLogin }) => {
                         
                     }
                     catch(error) {
-                        console.error("Error making login request:", error.message);
+                        console.error("Error creating user:", error.message);
                         Alert.alert(
                             "Error",
                             "This operation didn't work, try again",
